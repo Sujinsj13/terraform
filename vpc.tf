@@ -1,24 +1,24 @@
 # ---------- VPC ----------
-resource "aws_vpc" "vivriti" {
+resource "aws_vpc" "code" {
   cidr_block           = "10.0.0.0/16"
  
   tags = {
-    Name = "vivriti-vpc"
+    Name = "code-vpc"
   }
 }
  
 # ---------- Internet Gateway ----------
 resource "aws_internet_gateway" "vpc-igw" {
-  vpc_id = aws_vpc.vivriti.id
+  vpc_id = aws_vpc.code.id
  
   tags = {
-    Name = "vivriti-igw"
+    Name = "code-igw"
   }
 }
  
 # ---------- Public Subnet ----------
 resource "aws_subnet" "public" {
-  vpc_id                  = aws_vpc.vivriti.id
+  vpc_id                  = aws_vpc.code.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
  
@@ -29,7 +29,7 @@ resource "aws_subnet" "public" {
  
 # ---------- Private Subnet ----------
 resource "aws_subnet" "private" {
-  vpc_id            = aws_vpc.vivriti.id
+  vpc_id            = aws_vpc.code.id
   cidr_block        = "10.0.2.0/24"
  
   tags = {
@@ -47,7 +47,7 @@ resource "aws_eip" "nat" {
 }
  
 # ---------- NAT Gateway ----------
-resource "aws_nat_gateway" "vivriti-nat" {
+resource "aws_nat_gateway" "code-nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public.id
  
@@ -60,7 +60,7 @@ resource "aws_nat_gateway" "vivriti-nat" {
  
 # ---------- Public Route Table ----------
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.vivriti.id
+  vpc_id = aws_vpc.code.id
  
   route {
     cidr_block = "0.0.0.0/0"
@@ -79,11 +79,11 @@ resource "aws_route_table_association" "public" {
  
 # ---------- Private Route Table ----------
 resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.vivriti.id
+  vpc_id = aws_vpc.code.id
  
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.vivriti-nat.id
+    nat_gateway_id = aws_nat_gateway.code-nat.id
   }
  
   tags = {
