@@ -15,10 +15,11 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init -reconfigure -migrate-state -force-copy'
+                sh 'rm -rf .terraform'
+                sh 'terraform init -input=false'
             }
         }
-        
+
         stage('Terraform Validate') {
             steps {
                 sh 'terraform validate'
@@ -27,7 +28,11 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                withAWS(credentials: 'aws-terraform-creds', region: 'us-east-1') {
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-terraform-creds',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
                     sh 'terraform plan -input=false -out=tfplan'
                 }
             }
@@ -35,7 +40,11 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                withAWS(credentials: 'aws-terraform-creds', region: 'us-east-1') {
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-terraform-creds',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
                     sh 'terraform apply -input=false -auto-approve tfplan'
                 }
             }
