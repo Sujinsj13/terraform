@@ -13,13 +13,9 @@ pipeline {
             }
         }
 
-stage('Terraform Init') {
-    steps {
-        sh '''
-        terraform init \
-          -input=false \
-          -migrate-state
-        '''
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init -migrate-state'
             }
         }
 
