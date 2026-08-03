@@ -3,6 +3,5 @@ terraform {
     bucket         = "github-backup-2"
     key            = "prod/terraform.tfstate"
     region         = "us-east-1"
-    encrypt        = true
   }
 }
