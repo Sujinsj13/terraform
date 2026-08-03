@@ -15,10 +15,10 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+        sh 'terraform init -input=false -reconfigure'
             }
         }
-
+        
         stage('Terraform Validate') {
             steps {
                 sh 'terraform validate'
